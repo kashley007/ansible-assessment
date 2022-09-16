@@ -1,20 +1,4 @@
 ---
-- name: Creating Security Group for EC2 instance on AWS
-    ec2_group:
-      name: WebSG
-      description: Security Group for Web Server allowing port for http and ssh
-      region: ap-south-1
-      aws_access_key: "{{ access_key }}"
-      aws_secret_key: "{{ secret_key }}"
-      rules:
-      - proto: tcp
-        from_port: 22
-        to_port: 22
-        cidr_ip: 0.0.0.0/0
-      - proto: tcp
-        from_port: 80
-        to_port: 80
-        cidr_ip: 0.0.0.0/0
-      rules_egress:
-      - proto: all
-        cidr_ip: 0.0.0.0/0
+- hosts: localhost
+  roles:
+    - ec2_base
