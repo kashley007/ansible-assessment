@@ -11,3 +11,4 @@ region: us-east-1
 subnet_id: subnet-987353c4
 vpc_id: vpc-af90e0d5
 ansible_ssh_user: ubuntu
+ansible_connection: aws_ssm
