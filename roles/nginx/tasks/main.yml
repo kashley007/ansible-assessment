@@ -1,2 +1,21 @@
 ---
 # tasks file for nginx
+- name: nginx site config templating
+  template:
+    src: files/nginx.conf
+    dest: /etc/nginx/sites-available/{{ app_name }}
+- name: remove default nginx site config
+  file: path=/etc/nginx/sites-enabled/default state=absent
+- name: enable nginx site
+  file:
+    src: /etc/nginx/sites-available/{{ app_name }}
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+    force: yes
+- name: open firewall for nginx
+  ufw:
+    rule: allow
+    port: '80'
+    proto: tcp
+- name: restart nginx
+  systemd: name=nginx state=restarted enabled=yes

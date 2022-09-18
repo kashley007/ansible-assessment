@@ -1,4 +1,5 @@
 access_ip: 45.36.131.90/32
+ansible_ip: 44.225.207.75/32
 image_id: ami-052efd3df9dad4825
 env_name: Test Environment
 instance_count: 1
@@ -7,5 +8,6 @@ instance_type: t2.micro
 owner: kevina@vmware.com
 prefix: kashley
 region: us-east-1
-subnet_id: subnet-0670e4bdab302a966
-vpc_id: vpc-0bcb5dc7118b190a2
+subnet_id: subnet-987353c4
+vpc_id: vpc-af90e0d5
+ansible_ssh_user: ubuntu

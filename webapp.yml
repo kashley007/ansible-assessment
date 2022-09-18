@@ -1,1 +1,1 @@
-- import_playbook: webserver.yml
+- import_playbook: ec2_base.yml

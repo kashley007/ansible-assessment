@@ -1,4 +1,6 @@
 ---
-- hosts: localhost
+- hosts: webserver
+  gather_facts: yes
   roles:
-    - ec2_base
+    - webserver
+    - nginx
