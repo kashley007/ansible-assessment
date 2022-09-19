@@ -1,6 +1,13 @@
 ---
-- hosts: webserver
+- hosts: _kashley_Webserver
   gather_facts: yes
+  become: true
+  become_method: sudo
+  vars:
+    ansible_user: ssm-user
+    ansible_connection: aws_ssm
+    ansible_shell_type: sh
+    ansible_aws_ssm_region: us-east-1
   roles:
-    - webserver
+    - demo_app
     - nginx

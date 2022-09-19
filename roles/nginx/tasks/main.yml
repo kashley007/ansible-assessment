@@ -1,5 +1,15 @@
 ---
 # tasks file for nginx
+- name: Create a directory if it does not exist
+  file:
+    path: /etc/nginx/sites-available
+    state: directory
+    mode: '0755'
+- name: Create a directory if it does not exist
+  file:
+    path: /etc/nginx/sites-enabled
+    state: directory
+    mode: '0755'
 - name: nginx site config templating
   template:
     src: files/nginx.conf
@@ -12,10 +22,5 @@
     dest: /etc/nginx/sites-enabled/default
     state: link
     force: yes
-- name: open firewall for nginx
-  ufw:
-    rule: allow
-    port: '80'
-    proto: tcp
 - name: restart nginx
   systemd: name=nginx state=restarted enabled=yes

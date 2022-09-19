@@ -44,6 +44,7 @@
     assume_role_policy_document: "{{ lookup('file','policy.json') }}"
     managed_policies:
       - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
     purge_managed_policies: true
     tags:
       Name: "{{ prefix }}-{{ instance_name }}-AccessRole"
@@ -68,9 +69,7 @@
       owner: "{{ owner }}"
   register: ec2
 
-- name: Add new instance to host group
-  add_host:
-    hostname: "{{ item.public_ip_address }}"
-    groupname: webserver
-  loop: "{{ ec2.instances }}"
-  when: ec2.changed
+- name: Wait 300 seconds, but only start checking after 30 seconds
+  ansible.builtin.wait_for_connection:
+    delay: 60
+    timeout: 300
