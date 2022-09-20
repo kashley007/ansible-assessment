@@ -1,0 +1,12 @@
+plugin: aws_ec2
+regions:
+- us-east-1
+strict_permissions: false
+keyed_groups:
+- key: tags.Name
+filters:
+  instance-state-name : running
+hostnames:
+  - tag:Name=kashley-Webserver
+compose:
+  ansible_host: instance_id

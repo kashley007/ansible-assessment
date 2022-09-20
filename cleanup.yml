@@ -1,0 +1,31 @@
+- name: webserver_delete
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: terminate webserver instances
+      ec2_instance:
+        region: us-east-1
+        state: absent
+        filters:
+          instance-state-name: running
+          "tag:Name": "kashley-Webserver"
+        tags:
+          Name: "{{ prefix }}-{{ instance_name }}"
+          EnvName: "{{ env_name }}"
+          owner: "{{ owner }}"
+    - name: delete security group
+      amazon.aws.ec2_group:
+        name: "{{ prefix }}-{{ instance_name }}SG"
+        state: absent
+        region: "{{ region }}"
+        tags:
+          Name: "{{ prefix }}-{{ instance_name }}SG"
+          owner: "{{ owner }}"
+    - name: delete iam role
+      iam_role:
+        name: "{{ prefix }}-{{ instance_name }}SG"
+        state: absent
+        region: "{{ region }}"
+        tags:
+          Name: "{{ prefix }}-{{ instance_name }}-AccessRole"
+          owner: "{{ owner }}"

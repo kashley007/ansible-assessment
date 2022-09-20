@@ -1,0 +1,53 @@
+---
+# tasks file for webserver
+- name: Enable epel for AmzLinux2
+  become: yes
+  become_method: sudo
+  command: amazon-linux-extras enable epel
+- name: install packages
+  become: yes
+  become_method: sudo
+  yum: name={{item}} state=present
+  with_items:
+    - python3-pip
+    - python3-devel
+    - epel-release
+    - nginx
+    - git
+# Install Application
+
+- name: clone repo
+  git:
+    repo: 'https://github.com/{{ github_user }}/{{ app_name }}.git'
+    dest: /home/{{ ansible_user }}/{{ app_name }}
+    update: yes  # Does a git pull if the repo already exists
+    force: yes
+- name: Give insecure permissions to an existing file
+  file:
+    path: /home/{{ ansible_user }}/{{ app_name }}
+    owner: ssm-user
+    group: nginx
+    mode: '0755'
+    recurse: yes
+
+- name: Install virtualenv via pip
+  pip:
+    name: virtualenv
+    executable: pip3
+- name: Install modules in a virtualenv
+  pip:
+    requirements: /home/{{ ansible_user }}/{{ app_name }}/requirements.txt
+    virtualenv: /home/{{ ansible_user }}/{{ app_name }}/env
+    virtualenv_python: python3.7
+  environment:
+    PATH: "/usr/local/bin/"
+- name: template systemd service config
+  become: yes
+  become_method: sudo
+  template:
+    src: files/service.conf
+    dest: /etc/systemd/system/{{ app_name }}.service
+- name: start systemd app service
+  become: yes
+  become_method: sudo
+  systemd: name={{ app_name }}.service state=restarted enabled=yes

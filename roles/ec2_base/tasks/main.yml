@@ -1,0 +1,73 @@
+---
+
+## get ip of ansible instance running this playbook
+
+## get vpc info of ansible instance running
+
+- name: Security Group for EC2 access
+  ec2_group:
+    name: "{{ prefix }}-{{ instance_name }}SG"
+    description: Security Group allowing port for http and ssh
+    region: "{{ region }}"
+    rules:
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: "{{ access_ip }}"
+    - proto: tcp
+      from_port: 80
+      to_port: 80
+      cidr_ip: "{{ access_ip }}"
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: "{{ ansible_ip }}"
+    rules_egress:
+    - proto: tcp
+      from_port: 80
+      to_port: 80
+      cidr_ip: 0.0.0.0/0
+    - proto: tcp
+      from_port: 443
+      to_port: 443
+      cidr_ip: 0.0.0.0/0
+    tags:
+        Name: "{{ prefix }}-{{ instance_name }}SG"
+        owner: "{{ owner }}"
+    vpc_id: "{{ vpc_id }}"
+  register: security_group
+
+- name: "Create a role and attach 'AmazonSSMManagedInstanceCore' managed policy"
+  iam_role:
+    name: "{{ prefix }}-{{ instance_name }}-AccessRole"
+    description: Role for ansible connection
+    assume_role_policy_document: "{{ lookup('file','policy.json') }}"
+    managed_policies:
+      - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      - arn:aws:iam::aws:policy/AmazonS3FullAccess
+    purge_managed_policies: true
+    tags:
+      Name: "{{ prefix }}-{{ instance_name }}-AccessRole"
+      owner: "{{ owner }}"
+
+- name: EC2 Instance
+  ec2_instance:
+    instance_type: "{{ instance_type }}"
+    image_id: "{{ image_id }}"
+    wait: true
+    instance_role: "{{ prefix }}-{{ instance_name }}-AccessRole"
+    security_group: "{{ security_group.group_id }}"
+    exact_count: "{{ instance_count }}"
+    vpc_subnet_id: "{{ subnet_id }}"
+    network:
+      assign_public_ip: true
+    region: "{{ region }}"
+    state: running
+    tags:
+      Name: "{{ prefix }}-{{ instance_name }}"
+      EnvName: "{{ env_name }}"
+      owner: "{{ owner }}"
+  register: ec2
+
+- name: Refresh in-memory EC2 cache
+  meta: refresh_inventory

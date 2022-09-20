@@ -1,0 +1,24 @@
+---
+# tasks file for nginx
+- name: nginx site config templating
+  become: yes
+  become_method: sudo
+  template:
+    src: files/nginx.conf
+    dest: /etc/nginx/conf.d/{{ app_name }}.conf
+- name: nginx site config templating
+  become: yes
+  become_method: sudo
+  template:
+    src: files/full.conf
+    dest: /etc/nginx/nginx.conf
+- name: template systemd service config
+  become: yes
+  become_method: sudo
+  copy:
+    src: files/proxy.conf
+    dest: /etc/nginx
+- name: restart nginx
+  become: yes
+  become_method: sudo
+  systemd: name=nginx state=restarted enabled=yes
