@@ -8,7 +8,7 @@ instance_type: t2.micro
 owner: kevina@vmware.com
 prefix: kashley
 region: us-east-1
-subnet_id: subnet-0a4d50aab5fdcac22
-vpc_id: vpc-0ee4e99a2bd5b8ede
+subnet_id: subnet-987353c4
+vpc_id: vpc-af90e0d5
 github_user: kashley007
 app_name: kashley-web-app
