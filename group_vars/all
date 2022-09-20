@@ -7,7 +7,7 @@ instance_name: Webserver
 instance_type: t2.micro
 owner: kevina@vmware.com
 prefix: kashley
-region: us-east-1
+region: us-west-2
 subnet_id: subnet-0a4d50aab5fdcac22
 vpc_id: vpc-0ee4e99a2bd5b8ede
 github_user: kashley007
