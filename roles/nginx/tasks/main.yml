@@ -1,26 +1,24 @@
 ---
 # tasks file for nginx
-- name: Create a directory if it does not exist
-  file:
-    path: /etc/nginx/sites-available
-    state: directory
-    mode: '0755'
-- name: Create a directory if it does not exist
-  file:
-    path: /etc/nginx/sites-enabled
-    state: directory
-    mode: '0755'
 - name: nginx site config templating
+  become: yes
+  become_method: sudo
   template:
     src: files/nginx.conf
-    dest: /etc/nginx/sites-available/{{ app_name }}
-- name: remove default nginx site config
-  file: path=/etc/nginx/sites-enabled/default state=absent
-- name: enable nginx site
-  file:
-    src: /etc/nginx/sites-available/{{ app_name }}
-    dest: /etc/nginx/sites-enabled/default
-    state: link
-    force: yes
+    dest: /etc/nginx/conf.d/{{ app_name }}.conf
+- name: nginx site config templating
+  become: yes
+  become_method: sudo
+  template:
+    src: files/full.conf
+    dest: /etc/nginx/nginx.conf
+- name: template systemd service config
+  become: yes
+  become_method: sudo
+  copy:
+    src: files/proxy.conf
+    dest: /etc/nginx
 - name: restart nginx
+  become: yes
+  become_method: sudo
   systemd: name=nginx state=restarted enabled=yes
