@@ -15,21 +15,19 @@
     - nginx
     - git
 # Install Application
-
 - name: clone repo
   git:
     repo: 'https://github.com/{{ github_user }}/{{ app_name }}.git'
     dest: /home/{{ ansible_user }}/{{ app_name }}
     update: yes  # Does a git pull if the repo already exists
     force: yes
-- name: Give insecure permissions to an existing file
+- name: Give permissions to app files
   file:
     path: /home/{{ ansible_user }}/{{ app_name }}
     owner: ssm-user
     group: nginx
     mode: '0755'
     recurse: yes
-
 - name: Install virtualenv via pip
   pip:
     name: virtualenv
